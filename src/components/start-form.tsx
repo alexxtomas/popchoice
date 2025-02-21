@@ -10,9 +10,9 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { useState } from 'react';
 import { useUsersPreferences } from '@/hooks/useUsersPreferences';
 
+const numberOfPeopleOptions = Array.from({ length: 5 }, (_, i) => (i + 1).toString());
 const hours = Array.from({ length: 4 }, (_, i) => i.toString());
 const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
@@ -49,20 +49,26 @@ export function StartForm() {
           </Label>
         </div>
 
-        <Input
-          value={numberOfPeople}
-          onChange={(e) => {
-            const numberOfPeople = parseInt(e.target.value);
-
-            updateNumberOfPeople(isNaN(numberOfPeople) ? 1 : numberOfPeople);
-          }}
-          id="numberOfPeople"
-          className="rounded w-full"
-          type="number"
-          min={1}
-          max={5}
-          placeholder="1"
-        />
+        <div className="flex w-full justify-center">
+          <Select
+            value={numberOfPeople.toString()}
+            onValueChange={(newValue: string) => {
+              const numberOfPeople = parseInt(newValue);
+              updateNumberOfPeople(isNaN(numberOfPeople) ? 1 : numberOfPeople);
+            }}
+          >
+            <SelectTrigger id="number-of-people-select" className="w-[80px]">
+              <SelectValue placeholder="Number of people" />
+            </SelectTrigger>
+            <SelectContent>
+              {numberOfPeopleOptions.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {p}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </section>
       <section className=" space-y-2">
         <div className="flex items-center space-x-4">
