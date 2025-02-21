@@ -28,7 +28,10 @@ function UsersPreferencesFlow() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full flex flex-col items-center gap-4">
-      <span className="text-4xl mx-auto inline-block mb-2">{step}</span>
+      <div className="flex items-center gap-1 mb-2">
+        <User size={32} />
+        <span className="text-4xl">{step}</span>
+      </div>
       <section className="space-y-2 w-full resize-none">
         <Label>What’s your favorite movie and why?</Label>
         <Textarea
@@ -62,7 +65,7 @@ Because it taught me to never give up hope no matter how hard life gets"
           placeholder="Tom Hanks because he is really funny and can do the voice of Woody"
         />
       </section>
-      <Button>{isLastStep ? 'Get Movie' : 'Next Person'}</Button>
+      <Button className="w-full text-lg">{isLastStep ? 'Get Movie' : 'Next Person'}</Button>
     </form>
   );
 }
