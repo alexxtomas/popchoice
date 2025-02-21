@@ -13,6 +13,8 @@ export function UserPreferencesForm() {
     useUsersPreferences();
   const isLastStep = step === numberOfPeople;
 
+  console.log({ usersPreferences });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLastStep) {
