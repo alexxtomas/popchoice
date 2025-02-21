@@ -25,11 +25,16 @@ export function StartForm() {
     updateMinute,
     updateNumberOfPeople,
     updateStep,
+    updateUsersPreferences,
+    generateUsersPreferences,
   } = useUsersPreferences();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateStep(1);
+    const newUsersPreferences = generateUsersPreferences(numberOfPeople);
+    console.log(newUsersPreferences);
+    updateUsersPreferences(newUsersPreferences);
   };
 
   return (

@@ -1,6 +1,14 @@
 import { createContext, useState } from 'react';
 
+type UserPreferences = {
+  favoriteMovie: string;
+  preferenceType: 'new' | 'classic' | '';
+  mood: 'fun' | 'serious' | 'inspiring' | 'scary' | '';
+  famousFilmPerson: string;
+};
+
 export type TUserPreferencesContext = {
+  usersPreferences: UserPreferences[];
   step: number;
   numberOfPeople: number;
   hour: string;
@@ -9,11 +17,14 @@ export type TUserPreferencesContext = {
   updateHour: (hour: string) => void;
   updateMinute: (minute: string) => void;
   updateStep: (step: number) => void;
+  updateUsersPreferences: (usersPreferences: UserPreferences[]) => void;
+  generateUsersPreferences: (numberOfPeople: number) => UserPreferences[];
 };
 
 export const UsersPreferencesContext = createContext<TUserPreferencesContext | null>(null);
 
 export function UsersPreferencesProvider({ children }: Readonly<{ children: React.ReactNode }>) {
+  const [usersPreferences, setUsersPreferences] = useState<UserPreferences[]>([]);
   const [step, setStep] = useState(0);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [hour, setHour] = useState('0');
@@ -34,9 +45,29 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
     setStep(step);
   };
 
+  const updateUsersPreferences = (usersPreferences: UserPreferences[]) => {
+    setUsersPreferences(usersPreferences);
+  };
+
+  const generateUsersPreferences = (numberOfPeople: number) => {
+    const usersPreferences: UserPreferences[] = [];
+
+    for (let i = 0; i < numberOfPeople; i++) {
+      usersPreferences.push({
+        favoriteMovie: '',
+        preferenceType: '',
+        mood: '',
+        famousFilmPerson: '',
+      });
+    }
+
+    return usersPreferences;
+  };
+
   return (
     <UsersPreferencesContext.Provider
       value={{
+        usersPreferences,
         step,
         numberOfPeople,
         hour,
@@ -45,6 +76,8 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
         updateHour,
         updateMinute,
         updateStep,
+        updateUsersPreferences,
+        generateUsersPreferences,
       }}
     >
       {children}
