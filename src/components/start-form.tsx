@@ -47,7 +47,11 @@ export function StartForm() {
 
         <Input
           value={numberOfPeople}
-          onChange={(e) => updateNumberOfPeople(e.target.value)}
+          onChange={(e) => {
+            const numberOfPeople = parseInt(e.target.value);
+
+            updateNumberOfPeople(isNaN(numberOfPeople) ? 1 : numberOfPeople);
+          }}
           id="numberOfPeople"
           className="rounded w-full"
           type="number"

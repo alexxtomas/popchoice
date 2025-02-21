@@ -2,10 +2,10 @@ import { createContext, useState } from 'react';
 
 export type TUserPreferencesContext = {
   step: number;
-  numberOfPeople: string;
+  numberOfPeople: number;
   hour: string;
   minute: string;
-  updateNumberOfPeople: (numberOfPeople: string) => void;
+  updateNumberOfPeople: (numberOfPeople: number) => void;
   updateHour: (hour: string) => void;
   updateMinute: (minute: string) => void;
   updateStep: (step: number) => void;
@@ -15,11 +15,11 @@ export const UsersPreferencesContext = createContext<TUserPreferencesContext | n
 
 export function UsersPreferencesProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [step, setStep] = useState(0);
-  const [numberOfPeople, setNumberOfPeople] = useState('1');
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [hour, setHour] = useState('0');
   const [minute, setMinute] = useState('00');
 
-  const updateNumberOfPeople = (numberOfPeople: string) => {
+  const updateNumberOfPeople = (numberOfPeople: number) => {
     setNumberOfPeople(numberOfPeople);
   };
 
