@@ -6,8 +6,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { TagRadioGroup, TagRadioGroupItem } from './ui/tag-radio-group';
 import { Button } from '@/components/ui/button';
 import { useUsersPreferences } from '@/hooks/useUsersPreferences';
-import { Mood, PerferenceType } from '@/contexts/UsersPreferencesContext';
+import { Mood, PerferenceType, UserPreferences } from '@/contexts/UsersPreferencesContext';
 import { useState } from 'react';
+
+function formValidation(currUserPreferences: UserPreferences) {
+  if (!currUserPreferences.favoriteMovie) {
+    return 'Please tell us about your favorite movie 🎬';
+  }
+
+  if (!currUserPreferences.preferenceType) {
+    return 'Please tell us if you prefer something new or classic 🤔';
+  }
+
+  if (!currUserPreferences.mood) {
+    return 'Please tell us what you are in the mood for 😊';
+  }
+
+  if (!currUserPreferences.famousFilmPerson) {
+    return 'Please tell us who you love to be stranded on an island with 🙃';
+  }
+}
 
 export function UserPreferencesForm() {
   const [errorMessage, setErrorMessage] = useState('');
@@ -19,27 +37,14 @@ export function UserPreferencesForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!currUserPreferences.favoriteMovie) {
-      setErrorMessage('Please tell us about your favorite movie 🎬');
-      return;
-    }
-
-    if (!currUserPreferences.preferenceType) {
-      setErrorMessage('Please tell us if you prefer something new or classic 🤔');
-      return;
-    }
-
-    if (!currUserPreferences.mood) {
-      setErrorMessage('Please tell us what you are in the mood for 😊');
-      return;
-    }
-
-    if (!currUserPreferences.famousFilmPerson) {
-      setErrorMessage('Please tell us who you love to be stranded on an island with 🙃');
+    const errorMessage = formValidation(currUserPreferences);
+    if (errorMessage) {
+      setErrorMessage(errorMessage);
       return;
     }
 
     setErrorMessage('');
+
     if (isLastStep) {
       console.log('submit');
       return;

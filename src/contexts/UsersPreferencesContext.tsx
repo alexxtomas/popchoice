@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 export type PerferenceType = 'new' | 'classic';
 export type Mood = 'fun' | 'serious' | 'inspiring' | 'scary';
 
-type UserPreferences = {
+export type UserPreferences = {
   favoriteMovie: string;
   preferenceType: PerferenceType | '';
   mood: Mood | '';
