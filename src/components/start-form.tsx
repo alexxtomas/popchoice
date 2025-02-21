@@ -11,12 +11,14 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { useUsersPreferences } from '@/hooks/useUsersPreferences';
+import { useState } from 'react';
 
 const numberOfPeopleOptions = Array.from({ length: 5 }, (_, i) => (i + 1).toString());
 const hours = Array.from({ length: 4 }, (_, i) => i.toString());
 const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
 export function StartForm() {
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     hour,
     minute,
@@ -31,6 +33,17 @@ export function StartForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (Number(hour) < 1) {
+      setErrorMessage('Minimum time allowed is 1 hour');
+      return;
+    }
+
+    if (numberOfPeople < 1) {
+      setErrorMessage('Minimum number of people allowed is 1');
+      return;
+    }
+
+    setErrorMessage('');
     updateStep(1);
     const newUsersPreferences = generateUsersPreferences(numberOfPeople);
     updateUsersPreferences(newUsersPreferences);
@@ -120,6 +133,7 @@ export function StartForm() {
           </div>
         </div>
       </section>
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <Button className="w-full text-lg">Start</Button>
     </form>
   );
