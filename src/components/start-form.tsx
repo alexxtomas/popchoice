@@ -33,7 +33,6 @@ export function StartForm() {
     e.preventDefault();
     updateStep(1);
     const newUsersPreferences = generateUsersPreferences(numberOfPeople);
-    console.log(newUsersPreferences);
     updateUsersPreferences(newUsersPreferences);
   };
 

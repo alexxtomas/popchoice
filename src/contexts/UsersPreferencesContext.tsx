@@ -1,9 +1,12 @@
 import { createContext, useState } from 'react';
 
+export type PerferenceType = 'new' | 'classic';
+export type Mood = 'fun' | 'serious' | 'inspiring' | 'scary';
+
 type UserPreferences = {
   favoriteMovie: string;
-  preferenceType: 'new' | 'classic' | '';
-  mood: 'fun' | 'serious' | 'inspiring' | 'scary' | '';
+  preferenceType: PerferenceType | '';
+  mood: Mood | '';
   famousFilmPerson: string;
 };
 
