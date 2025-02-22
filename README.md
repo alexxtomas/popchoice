@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Seeding Your Supabase Database via the SQL Editor
 
-## Getting Started
+This guide explains how to seed your remote Supabase database using the SQL Editor in the Supabase Dashboard. It also covers how to enable the vector extension (pgvector) so that your database can store vector data.
 
-First, run the development server:
+## Steps to Seed Your Database
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. **Log in to Supabase:**
+
+   - Visit the [Supabase Dashboard](https://app.supabase.com) and sign in with your credentials.
+
+2. **Open the SQL Editor:**
+
+   - From the left sidebar, click on **SQL Editor**.
+
+3. **Enable the Vector Extension:**
+
+   - Before creating tables with vector columns, you must activate the pgvector extension. In the SQL Editor, run the following command:
+     ```sql
+     CREATE EXTENSION IF NOT EXISTS vector;
+     ```
+   - This command ensures that the extension is enabled, allowing you to use the `vector` type in your tables.
+
+4. **Seed Your Database:**
+   - Copy and paste the SQL code below (which creates a table and a function) into the SQL Editor.
+   - Click **RUN** to execute the code on your remote Supabase database.
+
+## SQL Code and Its Explanation
+
+```sql
+-- Enable pgvector extension to support vector columns
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Create a table to store your documents (e.g., movie data)
+CREATE TABLE movies (
+  id BIGSERIAL PRIMARY KEY,    -- Automatically generates a unique ID for each record
+  content TEXT,                -- Stores a text chunk (such as a description)
+  embedding VECTOR(1536)       -- Stores a 1536-dimensional vector (e.g., an embedding from OpenAI)
+);
+
+-- Create or replace a function to match movies based on vector similarity
+CREATE OR REPLACE FUNCTION match_movies (
+  query_embedding VECTOR(1536), -- The vector to compare against stored embeddings
+  match_threshold FLOAT,        -- A threshold for filtering similar records
+  match_count INT               -- The maximum number of records to return
+)
+RETURNS TABLE (
+  id BIGINT,
+  content TEXT,
+  similarity FLOAT
+)
+LANGUAGE SQL STABLE
+AS $$
+  SELECT
+    movies.id,
+    movies.content,
+    1 - (movies.embedding <=> query_embedding) AS similarity
+  FROM movies
+  WHERE 1 - (movies.embedding <=> query_embedding) > match_threshold
+  ORDER BY similarity DESC
+  LIMIT match_count;
+$$;
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
