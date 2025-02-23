@@ -7,7 +7,7 @@ import { TagRadioGroup, TagRadioGroupItem } from './ui/tag-radio-group';
 import { Button } from '@/components/ui/button';
 import { useUsersPreferences } from '@/hooks/useUsersPreferences';
 import { Mood, PerferenceType, UserPreferences } from '@/contexts/UsersPreferencesContext';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 
 function formValidation(currUserPreferences: UserPreferences) {
   if (!currUserPreferences.favoriteMovie) {
@@ -31,10 +31,13 @@ export function UserPreferencesForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const { step, numberOfPeople, updateStep, usersPreferences, updateUsersPreferences } =
     useUsersPreferences();
+  const [isPending, startTransition] = useTransition()
   const isLastStep = step === numberOfPeople;
   const currUserPreferences = usersPreferences[step - 1];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const buttonText = isLastStep ? 'Get Movie' : 'Next Person'
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const errorMessage = formValidation(currUserPreferences);
@@ -46,12 +49,27 @@ export function UserPreferencesForm() {
     setErrorMessage('');
 
     if (isLastStep) {
-      console.log('submit');
+      startTransition( async () => {
+        const res = await fetch('/api/generate-pop-choices', {
+          method: 'POST',
+          body: JSON.stringify({
+            textsToEmbed: usersPreferences.map((userPref) => `${userPref.favoriteMovie} ${userPref.preferenceType} ${userPref.mood} ${userPref.famousFilmPerson}`)
+          })
+        })
+  
+        if(!res.ok) {
+          console.log('handle error')
+          return
+        }
+  
+        const data = await res.json()
+      })
       return;
     }
     updateStep(step + 1);
   };
   return (
+   
     <form onSubmit={handleSubmit} className="w-full flex flex-col items-center gap-4">
       <div className="flex items-center gap-1 mb-2">
         <User size={32} />
@@ -117,7 +135,7 @@ Because it taught me to never give up hope no matter how hard life gets"
         />
       </section>
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      <Button className="w-full text-lg">{isLastStep ? 'Get Movie' : 'Next Person'}</Button>
+      <Button disabled={isPending}  className="w-full text-lg">{isPending ? 'Loading...' : buttonText}</Button>
     </form>
   );
 }

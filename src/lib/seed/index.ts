@@ -1,20 +1,18 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { openai, supabase } from '@/lib/config';
+import { promises as fs } from 'fs';
+import path from 'path';
+
 
 /* Split movies.txt into text chunks.
 Return LangChain's "output" – the array of Document objects. */
 async function splitDocument(documentPath: string) {
   try {
-    const response = await fetch(documentPath);
-    // Check if fetch request was successful
-    if (!response.ok) {
-      throw new Error('Network response was not ok.');
-    }
-
-    const text = await response.text();
+    const text = await fs.readFile(path.join(process.cwd(), documentPath), 'utf-8');
     const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 250,
-      chunkOverlap: 35,
+      separators: ["\n\n"],
+      chunkSize: 2000,  // Increased to ensure each movie entry stays together
+      chunkOverlap: 0,  // No overlap needed since we're splitting by complete entries
     });
     const output = await splitter.createDocuments([text]);
     return output;
