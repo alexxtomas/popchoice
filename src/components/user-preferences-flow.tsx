@@ -3,7 +3,7 @@ import { UsersPreferencesProvider } from '@/contexts/UsersPreferencesContext';
 import { StartForm } from './start-form';
 import { useUsersPreferences } from '@/hooks/useUsersPreferences';
 import { Button } from './ui/button';
-import { ChevronLeft, User } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { UserPreferencesForm } from './user-preferences-form';
 
 function UsersPreferencesFlow() {
