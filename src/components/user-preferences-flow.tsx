@@ -17,7 +17,20 @@ function UsersPreferencesFlow() {
 }
 
 function BaseUsersPreferencesFlow() {
-  const { step, updateStep } = useUsersPreferences();
+  const { step, updateStep, moviesSuggestions } = useUsersPreferences();
+
+  if(moviesSuggestions.length ) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1>
+          {moviesSuggestions[0].title}
+        </h1>
+        <p>
+          {moviesSuggestions[0].whyThisMovie}
+        </p>
+      </div>
+    )
+  }
   return (
     <>
       {step > 0 && (

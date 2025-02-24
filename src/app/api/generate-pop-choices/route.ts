@@ -57,12 +57,20 @@ export async function POST(req: NextRequest) {
     const results = await searchWithMultipleEmbeddings(embeddings);
 
     const completions = await Promise.all(results.map(async (result) => {
+      const systemPrompt = `You are a helpful assistant and you're an expert in movies. I will give you a movie that is the best for a specific users preferences. I also will give you the users preferences. You need to return a brief description of the movie in a catchy way, and why based on the all users preferences that you have received why this movie is the best recommendation for them. Be concise and to the point. No more than 100 words.
+
+      You must respond ONLY with a JSON object in the following format, with no additional text or explanation:
+      {
+        "whyThisMovie": "your explanation here",
+        "title": "movie title here"
+      }`;
+
       const res = await openai.chat.completions.create({
         model: 'gpt-4o-2024-11-20',
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant in application that helps users find the best movies for them. I will give you a move that is the best for the users preferences. I also will give you the users preferences. You need to return a brief description of the movie in a catchy way, and why based on the all users preferences that you have received why this movie is the best recommendation for them. Be concise and to the point. No more than 100 words'
+            content: systemPrompt
           },
           {
             role: 'user',
@@ -72,17 +80,25 @@ export async function POST(req: NextRequest) {
             `
           }
         ]
-      })
+      });
 
-      return res.choices[0].message.content
+      // Ensure content is not null before parsing
+      const content = res.choices[0].message.content;
+      if (!content) {
+        throw new Error('No content in response');
+      }
+
+      // Parse the response to ensure it's valid JSON
+      const jsonResponse = JSON.parse(content);
+      return jsonResponse;
     }))
 
-    return NextResponse.json({ completions });
+    return NextResponse.json({ data: completions ?? [] });
 
   } catch (error) {
-    console.error('Error generating embedding:', error);
+    console.error('Error generating or parsing response:', error);
     return NextResponse.json(
-      { error: 'Failed to generate embedding' },
+      { error: 'Failed to generate or parse response', data: [] },
       { status: 500 }
     );
   }

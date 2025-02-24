@@ -3,6 +3,11 @@ import { createContext, useState } from 'react';
 export type PerferenceType = 'new' | 'classic';
 export type Mood = 'fun' | 'serious' | 'inspiring' | 'scary';
 
+export type MovieSuggestion = {
+  whyThisMovie: string;
+  title: string;
+}
+
 export type UserPreferences = {
   favoriteMovie: string;
   preferenceType: PerferenceType | '';
@@ -11,6 +16,7 @@ export type UserPreferences = {
 };
 
 export type TUserPreferencesContext = {
+  moviesSuggestions: MovieSuggestion[];
   usersPreferences: UserPreferences[];
   step: number;
   numberOfPeople: number;
@@ -21,6 +27,7 @@ export type TUserPreferencesContext = {
   updateMinute: (minute: string) => void;
   updateStep: (step: number) => void;
   updateUsersPreferences: (usersPreferences: UserPreferences[]) => void;
+  updateMoviesSuggestions: (moviesSuggestions: MovieSuggestion[]) => void;
   generateUsersPreferences: (numberOfPeople: number) => UserPreferences[];
 };
 
@@ -32,6 +39,7 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [hour, setHour] = useState('0');
   const [minute, setMinute] = useState('00');
+  const [moviesSuggestions, setMoviesSuggestions] = useState<{whyThisMovie: string, title: string}[]>([]);
 
   const updateNumberOfPeople = (numberOfPeople: number) => {
     setNumberOfPeople(numberOfPeople);
@@ -50,6 +58,10 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
 
   const updateUsersPreferences = (usersPreferences: UserPreferences[]) => {
     setUsersPreferences(usersPreferences);
+  };
+
+  const updateMoviesSuggestions = (moviesSuggestions: MovieSuggestion[]) => {
+    setMoviesSuggestions(moviesSuggestions);
   };
 
   const generateUsersPreferences = (numberOfPeople: number) => {
@@ -71,6 +83,7 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
     <UsersPreferencesContext.Provider
       value={{
         usersPreferences,
+        moviesSuggestions,
         step,
         numberOfPeople,
         hour,
@@ -80,6 +93,7 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
         updateMinute,
         updateStep,
         updateUsersPreferences,
+        updateMoviesSuggestions,
         generateUsersPreferences,
       }}
     >

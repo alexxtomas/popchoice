@@ -29,13 +29,13 @@ function formValidation(currUserPreferences: UserPreferences) {
 
 export function UserPreferencesForm() {
   const [errorMessage, setErrorMessage] = useState('');
-  const { step, numberOfPeople, updateStep, usersPreferences, updateUsersPreferences } =
+  const { step, numberOfPeople, updateStep, usersPreferences, updateMoviesSuggestions, updateUsersPreferences } =
     useUsersPreferences();
   const [isPending, startTransition] = useTransition()
   const isLastStep = step === numberOfPeople;
   const currUserPreferences = usersPreferences[step - 1];
 
-  const buttonText = isLastStep ? 'Get Movie' : 'Next Person'
+  const buttonText = isLastStep ? 'Get Movies' : 'Next Person'
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,8 +61,13 @@ export function UserPreferencesForm() {
           console.log('handle error')
           return
         }
+
   
-        const data = await res.json()
+        const {data} = await res.json()
+
+        updateMoviesSuggestions(data)
+
+        console.log({data}) 
       })
       return;
     }
