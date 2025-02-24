@@ -8,9 +8,8 @@ export default function Home() {
       <main className="max-w-sm mx-auto min-h-screen flex flex-col justify-center items-center">
         <header className="flex flex-col items-center justify-center">
           <Link href={'/'}>
-            <Image src="/logo-with-title.webp" alt="PopChoice Logo" width={200} height={200} />
+            <Image src="/logo-with-title.webp" alt="PopChoice Logo" width={170} height={170} />
           </Link>
-
           <h1 className="text-2xl font-bold sr-only">PopChoice</h1>
         </header>
         <UsersPreferencesFlowWithContext />

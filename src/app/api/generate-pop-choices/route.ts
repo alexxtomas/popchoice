@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { openai, supabase } from '@/lib/config';
 
+const BASE_URL = 'https://api.themoviedb.org'
+
 // Function to search with multiple embeddings using existing match_movies
 export type MultipleMatches = {
   content: string, 
@@ -93,7 +95,42 @@ export async function POST(req: NextRequest) {
       return jsonResponse;
     }))
 
-    return NextResponse.json({ data: completions ?? [] });
+
+    const movies = await Promise.all(completions.map(async (completion) => {
+      const {title} = completion;
+
+
+      const response = await fetch(`${BASE_URL}/3/search/movie?query=${title}`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${process.env.MOVIES_API_TOKEN}`
+        }
+      })
+
+      if(!response.ok) {
+        throw new Error('Failed to fetch movie');
+      }
+      const data = await response.json();
+      const movie = data.results[0];
+      const posterPath = movie.poster_path;
+
+      const imageResponse = await fetch(`https://image.tmdb.org/t/p/w500/${posterPath}`)
+
+      console.log(imageResponse)
+
+      const imageBuffer = await imageResponse.arrayBuffer();
+      const base64Image = Buffer.from(imageBuffer).toString('base64');
+
+      const imageUrl = `data:image/webp;base64,${base64Image}`;
+
+      return {
+        ...completion,
+        title,
+        imageUrl
+      }
+    }))
+
+    return NextResponse.json({ data: movies ?? [] });
 
   } catch (error) {
     console.error('Error generating or parsing response:', error);

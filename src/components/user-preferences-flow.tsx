@@ -5,6 +5,7 @@ import { useUsersPreferences } from '@/hooks/useUsersPreferences';
 import { Button } from './ui/button';
 import { ChevronLeft } from 'lucide-react';
 import { UserPreferencesForm } from './user-preferences-form';
+import { MoviesSuggestions } from './movies-suggestions';
 
 function UsersPreferencesFlow() {
   const { step } = useUsersPreferences();
@@ -21,14 +22,7 @@ function BaseUsersPreferencesFlow() {
 
   if(moviesSuggestions.length ) {
     return (
-      <div className="flex flex-col items-center justify-center">
-        <h1>
-          {moviesSuggestions[0].title}
-        </h1>
-        <p>
-          {moviesSuggestions[0].whyThisMovie}
-        </p>
-      </div>
+      <MoviesSuggestions />
     )
   }
   return (

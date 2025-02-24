@@ -6,6 +6,7 @@ export type Mood = 'fun' | 'serious' | 'inspiring' | 'scary';
 export type MovieSuggestion = {
   whyThisMovie: string;
   title: string;
+  imageUrl: string;
 }
 
 export type UserPreferences = {
@@ -29,6 +30,7 @@ export type TUserPreferencesContext = {
   updateUsersPreferences: (usersPreferences: UserPreferences[]) => void;
   updateMoviesSuggestions: (moviesSuggestions: MovieSuggestion[]) => void;
   generateUsersPreferences: (numberOfPeople: number) => UserPreferences[];
+  reset: () => void;
 };
 
 export const UsersPreferencesContext = createContext<TUserPreferencesContext | null>(null);
@@ -39,7 +41,17 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [hour, setHour] = useState('0');
   const [minute, setMinute] = useState('00');
-  const [moviesSuggestions, setMoviesSuggestions] = useState<{whyThisMovie: string, title: string}[]>([]);
+  const [moviesSuggestions, setMoviesSuggestions] = useState<MovieSuggestion[]>([]);
+
+
+  const reset = () => {
+    setMoviesSuggestions([])
+    setUsersPreferences([])
+    setStep(0)
+    setNumberOfPeople(1)
+    setHour('0')
+    setMinute('00')
+  }
 
   const updateNumberOfPeople = (numberOfPeople: number) => {
     setNumberOfPeople(numberOfPeople);
@@ -95,6 +107,7 @@ export function UsersPreferencesProvider({ children }: Readonly<{ children: Reac
         updateUsersPreferences,
         updateMoviesSuggestions,
         generateUsersPreferences,
+        reset,
       }}
     >
       {children}
